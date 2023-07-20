@@ -1,0 +1,74 @@
+.custom-card {
+  border-radius: 40px;
+  border: none;
+  background-color: #f8f9fa;
+  margin-bottom: 30px;
+  width: 320px;
+  height: 220px;
+ 
+}
+
+.custom-card-body {
+  padding: 15px;
+  border: none;
+  color: white;
+}
+
+/* เพิ่มสีสันให้กับการ์ด */
+.custom-card.card-1 {
+  border: none;
+  background: -webkit-linear-gradient(left, #adadad, #8a8a8a);
+  box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.2);
+  /* เรืองแสง */
+}
+
+.custom-card.card-2 {
+  border: none;
+  background: -webkit-linear-gradient(left, #adadad, #8a8a8a);
+  box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.2);
+  /* เรืองแสง */
+}
+
+.custom-card.card-3 {
+  border: none;
+  background: -webkit-linear-gradient(left, #adadad, #8a8a8a);
+  box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.2);
+  /* เรืองแสง */
+}
+
+.custom-card.card-4 {
+  border: none;
+  background: -webkit-linear-gradient(left, #adadad, #8a8a8a);
+  box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.2);
+  /* เรืองแสง */
+}
+.custom-card:hover {
+  transform: scale(1.1); /* เพิ่มขนาด Card เมื่อเมาส์เข้าใกล้ */
+  transition: transform 0.3s ease; /* เพิ่มเอฟเฟกต์การเปลี่ยนขนาดอนิเมชัน */
+}
+
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-xl-3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-card {
+  margin: 10px auto;
+}
+
+.number {
+  font-size: 100px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: right;
+  margin-top: 5px;
+}

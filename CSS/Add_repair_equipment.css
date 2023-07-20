@@ -1,0 +1,91 @@
+
+
+.card-container {
+  display: flex;
+  margin-left: 23%;
+  padding: auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.card {
+  background-color: #fafafa;
+  width: 550px;
+  height: 620px;
+  border-radius: 50px;
+  box-shadow: 0 7px 7px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card-container2 {
+  display: flex;
+  margin-left: 67%;
+  padding: auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: -620px;
+}
+
+.card h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.card-linkgreen {
+  margin-left: 83%;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  background-color: #34ca0a;
+  color: #ffffff;
+  padding: 10px 10px;
+  border-radius: 5px;
+  width: 100px;
+  margin-top: -45px;
+  transition: background-color 0.3s ease;
+}
+
+.card-linkgreen:hover {
+  background-color: #10f600;
+}
+
+.card input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.card2 input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.card2 {
+  width: 400px;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.card-linkred {
+  margin-left: 73%;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  background-color: #f6d607;
+  color: #ffffff;
+  padding: 10px 10px;
+  border-radius: 5px;
+  width: 100px;
+  margin-top: -45px;
+  transition: background-color 0.3s ease;
+}
+
+.card-linkred:hover {
+  background-color: #cca818;
+}

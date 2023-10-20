@@ -13,7 +13,7 @@ session_destroy(); // ลบ session ทั้งหมด
     Swal.fire({
         title: "ออกจากระบบสำเร็จ",
         icon: "success",
-        confirmButtonText: "OK"
+        confirmButtonText: "OK" 
     }).then((result) => {
         if (result.isConfirmed) {
             window.location.href = "index.php";
@@ -22,3 +22,6 @@ session_destroy(); // ลบ session ทั้งหมด
 </script>
 </body>
 </html>
+
+
+

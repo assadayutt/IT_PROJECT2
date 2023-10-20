@@ -1,16 +1,15 @@
 <?php
-// กำหนดค่าการเชื่อมต่อฐานข้อมูล
-$servername = "localhost"; // hostname ของ MySQL
-$username = "root"; // username ของ MySQL
-$password = "root"; // password ของ MySQL
-$dbname = "IMS-Project"; // ชื่อฐานข้อมูลที่ต้องการเชื่อมต่อ
+$servername = ""; 
+$username = "u530196580_Project_Ims"; 
+$password = "0988980954@Mew"; 
+$dbname = "u530196580_IMS_Project"; 
 
-// สร้างการเชื่อมต่อฐานข้อมูล
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 
-// ตรวจสอบการเชื่อมต่อ
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
-  //  echo "Connected successfully";
 ?>

@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../CSS/navbar.css">
 </head>
 
 <nav class="navbar navbar-light bg-light">
@@ -13,11 +13,7 @@
         <code>ระบบแจ้งซ่อมในคณะวิทยาการสารสนเทศ</code>
     </a>
     <boby>
-        <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-?>
+ 
 <?php
 // เช็คสถานะของเซสชั่นและทำตามการดำเนินการที่ต้องการกับค่า session
 if (isset($_SESSION['user_name'])):

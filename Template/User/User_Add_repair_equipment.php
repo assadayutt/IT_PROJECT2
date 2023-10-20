@@ -5,6 +5,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (!isset($_SESSION['id'])) {
+    // ถ้าไม่ได้ล็อกอิน ให้เปลี่ยนเส้นทางไปยังหน้าล็อกอินหรือที่ต้องการ
+    header("Location: /project/Template/User/User_login.php");
+    exit();
+}
+
 // ตรวจสอบและดำเนินการกับข้อมูลที่ส่งมาจากแบบฟอร์ม
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -38,16 +44,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $filePath = '';
     }
-
-    // ทำการบันทึกข้อมูล
    
-        // โค้ดส่วนที่มีการเชื่อมต่อฐานข้อมูลและประมวลผลคำสั่ง SQL
+            // โค้ดส่วนที่มีการเชื่อมต่อฐานข้อมูลและประมวลผลคำสั่ง SQL
         $stmt = $conn->prepare("INSERT INTO Equipment_repair(repair_detail, equipment_id, equipment_number, repair_date,  repair_imagesbefor, user_id, repairman_id, status_id) 
-       VALUES (?, ?, ?, CURDATE(), ?, ?, 999, 4)");
-      $success = $stmt->execute([$problem, $id_eq, $id_equipment, $filePath, $user_id]);
- 
+        VALUES (?, ?, ?, CURDATE(), ?, ?, 999, 4)");
+        $success = $stmt->execute([$problem, $id_eq, $id_equipment, $filePath, $user_id]);
 
-}
+
+    }
   
 ?>
 <!DOCTYPE html>
@@ -58,8 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../CSS/TableUser.css">
-    <link rel="stylesheet" href="../../CSS/card_Add_repair.css">
     <link rel="stylesheet" href="../../CSS/Add_repair_equipment.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
@@ -82,8 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('profileImageLabel').innerHTML = 'เลือกไฟล์รูปภาพ';
         }
     }
-
-
 
     $(document).ready(function() {
 
@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 // สร้าง AJAX request
                 $.ajax({
-                    url: "../../AJAX/AJAX_get_Equipment.php",
+                    url: "../../AJAX/User_AJAX/AJAX_get_Equipment.php",
                     type: "GET",
                     data: {
                         equipmentCode: equipmentCode
@@ -183,6 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     processData: false,
                     contentType: false,
                     success: function(response) {
+                        sendLineNotify();
                         Swal.fire({
                             title: "Success!",
                             text: "ข้อมูลถูกบันทึกแล้ว",
@@ -190,19 +191,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             confirmButtonText: "OK"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.reload(); // รีเฟรชหน้าเว็บ
+
+                                window.location.href =
+                                    "../../Template/User/User_ListRepair.php";
                             }
                         });
                     },
-                    error: function(xhr, status, error) {
-                        // ...
-                    }
+                    error: function(xhr, status, error) {}
                 });
-
             }
         });
     });
+
+    function sendLineNotify() {
+        $.ajax({
+            url: '/project/AJAX/User_AJAX/Get_repairman_linetoken.php',
+            method: 'POST',
+            dataType: 'json',
+            success: function(data) {
+                if (data.lineTokens && data.lineTokens.length > 0) {
+                    const lineTokens = data.lineTokens;
+                    const message = "มีการแจ้งซ่อมครุภัณฑ์ใหม่";
+ 
+                    lineTokens.forEach(lineToken => {
+                        sendLineMessage(lineToken, message);
+                    });
+                } else {
+                    console.error("ไม่พบ Line Token หรือเกิดข้อผิดพลาดในการรับ Line Token");
+                }
+            },
+            error: function(xhr, status, error) {
+                const lineToken = xhr.getResponseHeader('Authorization');
+                console.error("sendLineNotify_เกิดข้อผิดพลาดในการร้องขอ Line Token: " + error +
+                    " (Line Token: " +
+                    lineToken + ")");
+            }
+        });
+    }
+
+     function sendLineMessage(lineTokens, message) {
+    const formData = new URLSearchParams();
+    formData.append('message', message);
+    formData.append('lineToken', lineTokens);
+
+    var requestUrl = 'https://ims-project-server.vercel.app/send-line-notify'; // URL ถูกต้องและคงที่
+    
+    $.ajax({
+        url: requestUrl,
+        method: 'POST',
+        data: formData.toString(), // แปลง FormData เป็น string
+        contentType: 'application/x-www-form-urlencoded',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                console.log("ส่งข้อความ Line Notify สำเร็จ!");
+            } else {
+                console.error("ส่งข้อความ Line Notify ไม่สำเร็จ!");
+            }
+        },
+        error: function(xhr, status, error) {
+            const lineTokens = xhr.getResponseHeader('Authorization');
+            console.error("เกิดข้อผิดพลาดในการส่งข้อความ Line Notify: " + error +
+                " (Line Token: " + lineTokens + ")");
+        }
+    });
+}
     </script>
+
     <style>
     .card {
         min-height: 800px;
@@ -224,12 +279,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="id_equipment">กรอกรหัส / หมายเลขครุภัณฑ์</label>
+                            <label for="id_equipment"><span style="color: red;">*</span> กรอกรหัส /
+                                หมายเลขครุภัณฑ์</label><br>
                             <input type="text" id="id_equipment" name="id_equipment" class="form-control">
                         </div>
+                        <p> กดปุ่ม ตรวจสอบข้อมูล เพื่อดูรายละเอียดครุภัณฑ์ </P>
+
                         <button type="button" id="checkBtn" class="btn btn-primary">ตรวจสอบข้อมูล</button>
+                        <br>
                         <div class="form-group">
-                            <label for="problem">อธิบายปัญหาที่พบ</label>
+                            <label for="problem"><span style="color: red;">*</span> อธิบายปัญหาที่พบ</label>
                             <input type="text" id="problem" name="problem" class="form-control">
                         </div>
                         <div class="mt-2">
@@ -237,6 +296,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 alt="รูปภาพ" style="width: 100%; height: 300px; object-fit: cover;">
                         </div>
                         <br>
+                        <label for="picture"><span style="color: red;">*</span> อัพโหลดรูปภาพ</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="profileImage" name="profileImage"
                                 onchange="showPreview()">
@@ -248,12 +308,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="card-footer text-center">
                         <button class="btn btn-success" type="submit">บันทึก</button>
                         <a class="btn btn-danger" id="resetBtn">ล้างค่า</a>
+
                     </div>
 
             </div>
             <div class="col-lg-6">
+
                 <div class="card mt-5">
+                    <div class="card-header">
+                        <h2 class="text-center">รายละเอียดครุภัณฑ์</h2>
+                    </div>
                     <div class="card-body">
+
                         <div class="form-group">
                             <label for="name">รหัสครุภัณฑ์</label>
                             <input type="text" disabled="disabled" id="id_eq" class="form-control">
@@ -274,6 +340,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label for="address">ที่อยู่ครุภัณฑ์</label>
                             <input type="text" disabled="disabled" id="address" class="form-control">
                         </div>
+                        <p> โปรดตรวจสอบรายละเอียดครุภัณฑ์ก่อนบันทึกการแจ้งซ่อม </P>
                     </div>
                 </div>
                 </form>
@@ -287,5 +354,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php include '../../Footer/footer.php'; ?>
 </body>
- 
+
 </html>

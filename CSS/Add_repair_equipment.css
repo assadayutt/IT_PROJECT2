@@ -1,4 +1,6 @@
-
+body {
+  background: -webkit-linear-gradient(left, #FFEBCD, #E6E6FA);
+}
 
 .card-container {
   display: flex;
@@ -11,11 +13,13 @@
 .card {
   background-color: #fafafa;
   width: 550px;
-  height: 620px;
+  height: 920px;
   border-radius: 50px;
   box-shadow: 0 7px 7px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
+
+
 
 .card-container2 {
   display: flex;

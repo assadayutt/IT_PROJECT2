@@ -1,4 +1,3 @@
-
 table {
   margin: 20px;
   width: calc(100% - 40px); /* ลบ margin ของตารางออกจากขนาดเต็มหน้าจอ */
@@ -46,14 +45,6 @@ th {
   display: inline-block;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
 table {
   animation: fadeIn 1s ease-in-out;
@@ -177,6 +168,16 @@ table {
   color: white;
 }
 
+.status-awaiting-equipment123 {
+  background-color: rgb(255, 0, 238);
+  color: white;
+}
+
+.status-awaiting-equipment456 {
+  background-color: rgb(255, 64, 0);
+  color: white;
+}
+
 .pagination {
   margin-top: 20px;
   margin-left: 48%;
@@ -205,8 +206,4 @@ table {
   color: white;
   border-radius: 4px;
   margin-right: 5px;
-}
-body {
-  font-family: 'IBM Plex Sans Thai', sans-serif;
-  background: #FFEBCD;
 }

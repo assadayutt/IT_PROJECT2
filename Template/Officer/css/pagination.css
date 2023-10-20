@@ -1,0 +1,54 @@
+.pagination {
+    display: flex;
+    justify-content: end;
+    margin-top: 1rem; /* ปรับตามความเหมาะสม */
+}
+
+.page-link {
+    padding: 0.25rem 0.5rem;
+    margin: 0 0.25rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #007bff;
+    border-radius: 0.25rem;
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+}
+
+
+
+.button {
+    user-select: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+
+.button1 {
+    user-select: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    background-color: #e53935; /* เปลี่ยนเป็นสีแดง */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.button1:hover {
+    background-color: #c62828; /* เปลี่ยนเป็นสีแดงในโหมด Hover */
+}

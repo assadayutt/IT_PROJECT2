@@ -1,5 +1,5 @@
 body {
-  background: -webkit-linear-gradient(left, #FFEBCD, #E6E6FA);
+  background: -webkit-linear-gradient(left, #FFEBCD);
 }
 .card-container {
     display: flex;

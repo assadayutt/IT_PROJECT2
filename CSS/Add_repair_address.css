@@ -5,7 +5,9 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  
+  body {
+    background: -webkit-linear-gradient(left, #FFEBCD, #E6E6FA);
+  }
   .card {
     background-color: #fafafa;
   

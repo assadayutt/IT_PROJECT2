@@ -5,6 +5,13 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (!isset($_SESSION['id'])) {
+    // ถ้าไม่ได้ล็อกอิน ให้เปลี่ยนเส้นทางไปยังหน้าล็อกอินหรือที่ต้องการ
+    header("Location: /project/Template/User/User_login.php");
+    exit();
+}
+
+
 // ตรวจสอบและดำเนินการกับข้อมูลที่ส่งมาจากแบบฟอร์ม
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['detail']) && isset($_POST['problem']) && isset($_POST['address']) && isset($_FILES['profileImage'])) {
@@ -57,7 +64,6 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../CSS/TableUser.css">
-    <link rel="stylesheet" href="../../CSS/card_Add_repair.css">
     <link rel="stylesheet" href="../../CSS/Add_repair_address.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -88,7 +94,7 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
             $("#detail").val("");
             $("#problem").val("");
             $("#address").val("");
-            $("#previewImage").attr("src","../../Images/blank-image.jpeg"); 
+            $("#previewImage").attr("src", "../../Images/blank-image.jpeg");
             $("#profileImageLabel").html("เลือกไฟล์รูปภาพ");
         });
 
@@ -125,11 +131,17 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
                     processData: false,
                     contentType: false,
                     success: function(response) {
+                        sendLineNotify()
                         Swal.fire({
                             title: "Success!",
                             text: "บันทึกข้อมูลสำเร็จ",
                             icon: "success",
                             confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href =
+                                    "../../Template/User/User_ListRepair.php";
+                            }
                         });
                         document.getElementById('repairForm').reset();
                     },
@@ -145,6 +157,62 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
             }
         });
     });
+
+    function sendLineNotify() {
+        $.ajax({
+            url: '/project/AJAX/User_AJAX/Get_repairman_linetoken.php',
+            method: 'POST',
+            dataType: 'json',
+            success: function(data) {
+                if (data.lineTokens && data.lineTokens.length > 0) {
+                    const lineTokens = data.lineTokens;
+                    const message = "มีการแจ้งซ่อมพื้นที่ใหม่";
+
+                    lineTokens.forEach(lineToken => {
+                        sendLineMessage(lineToken, message);
+                    });
+                } else {
+                    console.error("ไม่พบ Line Token หรือเกิดข้อผิดพลาดในการรับ Line Token");
+                }
+            },
+            error: function(xhr, status, error) {
+                const lineToken = xhr.getResponseHeader('Authorization');
+                console.error("sendLineNotify_เกิดข้อผิดพลาดในการร้องขอ Line Token: " + error +
+                    " (Line Token: " +
+                    lineToken + ")");
+            }
+        });
+    }
+
+  function sendLineMessage(lineTokens, message) {
+    const formData = new URLSearchParams();
+    formData.append('message', message);
+    formData.append('lineToken', lineTokens);
+
+    var requestUrl = 'https://ims-project-server.vercel.app/send-line-notify'; // URL ถูกต้องและคงที่
+    
+    $.ajax({
+        url: requestUrl,
+        method: 'POST',
+        data: formData.toString(), // แปลง FormData เป็น string
+        contentType: 'application/x-www-form-urlencoded',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                console.log("ส่งข้อความ Line Notify สำเร็จ!");
+            } else {
+                console.error("ส่งข้อความ Line Notify ไม่สำเร็จ!");
+            }
+        },
+        error: function(xhr, status, error) {
+            const lineTokens = xhr.getResponseHeader('Authorization');
+            console.error("เกิดข้อผิดพลาดในการส่งข้อความ Line Notify: " + error +
+                " (Line Token: " + lineTokens + ")");
+        }
+    });
+}
+
+
     </script>
     <style>
     .card {
@@ -179,15 +247,15 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="detail">กรอกรายละเอียดการแจ้งซ่อม</label>
+                            <label for="detail"><span style="color: red;">*</span> กรอกรายละเอียดการแจ้งซ่อม</label>
                             <input type="text" id="detail" name="detail" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="problem">อธิบายปัญหาที่พบ</label>
+                            <label for="problem"><span style="color: red;">*</span> อธิบายปัญหาที่พบ</label>
                             <input type="text" id="problem" name="problem" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="address">พื้นที่ที่พบปัญหา</label>
+                            <label for="address"><span style="color: red;">*</span> พื้นที่ที่พบปัญหา</label>
                             <input type="text" id="address" name="address" class="form-control">
                         </div>
                         <div class="mt-2">
@@ -195,12 +263,13 @@ $stmt->execute([$detail, $problem, $address,$filePath, $user_id]);
                                 alt="รูปภาพ" style="width: 100%; height: 300px; object-fit: cover;">
                         </div>
                         <br>
+                        <label for="picture"><span style="color: red;">*</span> อัพโหลดรูปภาพ</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="profileImage" name="profileImage"
                                 onchange="showPreview()">
                             <label class="custom-file-label" for="profileImage"
                                 id="profileImageLabel">เลือกไฟล์รูปภาพ</label>
-                        </div>
+                        </div> 
 
                     </div>
                     <div class="card-footer text-center">
